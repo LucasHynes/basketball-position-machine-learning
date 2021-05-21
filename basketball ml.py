@@ -87,37 +87,50 @@ for i in data_by_year:
     regressor = linear_model.LinearRegression()  
     regressor.fit(X_train, y_train)
 
+    #get the model to predict the value
     y_pred = regressor.predict(X_test)
     
+    #will hold the "score" of prediction
     prediction_score = []
     counter = 0
 
+    #goes through each year
     for i in data_by_year:
+
+        #standards for the data
         x_tester = i[['AST%', 'ORB%', 'DRB%', 'STL%', 'BLK%', '2P%', '3P%', 'FT%']]
         y_actual = i['pos']
+        #predict based on the year
         y_predict = regressor.predict(x_tester)
     
+        #adds the score from the prediction and the year
         prediction_score.append(0)
         y_actually = list(y_actual)
+
+        #goes through the actual vs. the test to find the differnece in the calculations
         for j in range(len(y_actual)):
             prediction_score[counter] += (y_actually[j] - y_predict[j])
         prediction_score[counter] /= len(y_actually)
         counter += 1
-        
+    
+    # loops throuhg the scores to find the averages for each of the years
     for k in range(len(prediction_score)):
         final_predict[k] += (prediction_score[k] / len(data_by_year))
 
 labels = []
+#adds the labels to the data for each of the years
 for i in range(len(prediction_score)):
     if i%2 == 1:
         labels.append(1977 + i)
 
+#settings for the output figure for the chart
 fig = plt.figure(figsize = (fig_size, fig_size))
 ax = plt.axes()
 plt.plot(final_predict)
 ax.set_xticks([i - 1977 for i in labels])
 ax.set_xticklabels(labels)
 
+#line to show the x-axis
 zeros = []
 for i in range(len(final_predict)):
     zeros.append(0)
